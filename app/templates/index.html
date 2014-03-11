@@ -26,6 +26,11 @@
           <ul>
             <% if (includeCompass) { %><li>Sass with Compass</li><% } %>
             <% if (includeModernizr) { %><li>Modernizr</li><% } %>
+            <% if (includeFoundation) { %><li>Foundation 5</li><% } %>
+            <% if (includePure) { %><li>YUI Pure</li><% } %>
+            <% if (deployWithCDN) { %><li><a href="https://github.com/RobinQu/grunt-cdn">CDN</a> Prefixing</li><% } %>
+            <% if (deployWithBuildControl) { %><li>Deployment over <a href="https://github.com/robwierzbowski/grunt-build-control">Git build control</a></li><% } %>
+            <% if (deployWithSFTP) { %><li>Deployment over <a href="https://github.com/andrewrjones/grunt-ssh">SFTP</a></li><% } %>
           </ul>
         </div>
 

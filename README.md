@@ -36,7 +36,6 @@ Unique features:
 * Deployment support
   * Build-control over Git
   * SFTP
-  * Maven repo
 * Assets path replacement with CDN prefix
 
 

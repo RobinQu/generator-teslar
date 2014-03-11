@@ -6,7 +6,7 @@
     "modernizr": "~2.6.2",<% } %>
     <% if (includeFoundation) { %>
     "foundation": "~5.1.1",<% } %>
-    <% if (includePure) %>
+    <% if (includePure) { %>
     "pure": "~0.4.2",<% } %>
     "jquery": "~1.11.0"
   },

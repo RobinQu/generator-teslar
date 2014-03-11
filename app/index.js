@@ -62,10 +62,6 @@ var TeslarGenerator = yeoman.generators.Base.extend({
         type: "checkbox",
         message: "Handlebar related options (Multiple choices)",
         choices: [{
-          name: "Don't use Handlebars",
-          value: "renderWithoutHandlebars",
-          checked: true
-        },{
           name: "Precompile handlebars template for browser scripts",
           value: "renderHandlebarinBrowser",
           checked: false
@@ -79,10 +75,6 @@ var TeslarGenerator = yeoman.generators.Base.extend({
         type: "checkbox",
         message: "Deployment related options (Mutiple choices)",
         choices: [{
-          name: "Do nothing special about deployment",
-          value: "deployWithNothingSpecial",
-          checked: true
-        }, {
           name: "Prefix assets path with CDN url in HTML and CSS",
           checked: false,
           value: "deployWithCDN"
@@ -109,6 +101,7 @@ var TeslarGenerator = yeoman.generators.Base.extend({
         this.includeFoundation = hasFeature("includeFoundation");
         this.includePure = hasFeature("includePure");
         this.includeRequireJS = hasFeature("includeRequireJS");
+        this.renderWithHandlebarInGrunt = hasFeature("renderWithHandlebarInGrunt");
         
         // handlebars
         this.renderWithoutHandlebars = hasFeature("renderWithoutHandlebars");
@@ -118,7 +111,7 @@ var TeslarGenerator = yeoman.generators.Base.extend({
         this.deployWithCDN = hasFeature("deployWithCDN");
         this.deployWithBuildControl = hasFeature("deployWithBuildControl");
         this.deployWithSFTP = hasFeature("deployWithSFTP");
-        // this.deployWithNothingSpecial = hasFeature("deployWithNothingSpecial");
+        this.noActualDeployment = !(this.deployWithBuildControl || this.deployWithSFTP);
     
         done();
       }.bind(this));
@@ -183,7 +176,16 @@ var TeslarGenerator = yeoman.generators.Base.extend({
     this.write("app/index.html", this.indexFile);
   
     this.write("app/scripts/main.js", "console.log(\"Hello from Teslar!\");");
+  },
   
+  hbs: function() {
+    if(this.renderWithHandlebarInGrunt) {
+      this.mkdir("app/hbs_helpers");
+      this.copy("hbs", "app/hbs");
+    }
+    if(this.renderHandlebarinBrowser) {
+      this.mkdir("app/scripts/hbs");
+    }
   },
   
   install: function () {
@@ -200,17 +202,17 @@ var TeslarGenerator = yeoman.generators.Base.extend({
   },
   
   gitrevision: function() {
-    this.log(chalk.magenta("Hint"), "You can refer to git revision in Gruntfile using template string as '<%= meta.revision %>'");
+    this.log(chalk.magenta("Hint"), "You can refer to git revision in Gruntfile using template string as '<%= meta.revision %>'!");
   },
   
   sftp: function() {
     this.copy("ssh.json", ".sshconfig");
-    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your deployment path");
-    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your credential in .sshconfig");
+    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your deployment path!");
+    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your credential in .sshconfig!");
   },
   
   cdn: function() {
-    this.log(chalk.magenta("Hint"), "CDN Prefixing is checked. You should setup your CDN prefix in Gruntfile");
+    this.log(chalk.magenta("Hint"), "CDN Prefixing is checked. You should setup your CDN prefix in Gruntfile!");
   }
   
 });

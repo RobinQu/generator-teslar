@@ -116,7 +116,7 @@ module.exports = function (grunt) {
       sftp: {
         deploy: {
           files: {
-            "./": "<%%= config.dist %>/<%= meta.revision %>/**"
+            "./": "<%%= config.dist %>/<%%= meta.revision %>/**"
           },
           options: {
             // Deploy path is what you should setup
@@ -235,9 +235,9 @@ module.exports = function (grunt) {
               dest: "<%%= config.dist %>",
               src: [
                 "*",
-                "!<%= meta.revision %>",
+                "!<%%= meta.revision %>",
                 "!hbs",
-                "<%= meta.revision %>/hbs",
+                "<%%= meta.revision %>/hbs",
               ]
             }]
           }
@@ -406,9 +406,10 @@ module.exports = function (grunt) {
                   cwd: "<%%= config.app %>",
                   dest: "<%%= config.dist %>",
                   src: [
+                      "hbs/**/*.hbs",
                       "*.{ico,png,txt}",
                       ".htaccess",
-                      "images/{,*/}*.webp",
+                      "images/**/*.{webp,ico}",
                       "{,*/}*.html",
                       "styles/fonts/{,*/}*.*"
                   ]
@@ -426,7 +427,7 @@ module.exports = function (grunt) {
               expand: true,
               dot: true,
               cwd: "<%%= config.dist %>",
-              dest: "<%%= config.dist %>/<%= meta.revision %>",
+              dest: "<%%= config.dist %>/<%%= meta.revision %>",
               src: ["**/*", "!hbs/**/*"]
             }]
           }
@@ -524,7 +525,7 @@ module.exports = function (grunt) {
         "build"
     ]);
     
-    <% if (!deployWithNothingSpecial) { %>
+    <% if (!noActualDeployment) { %>
     grunt.registerTask("deploy", [
       "build", <% if (deployWithBuildControl) { %> 
       "buildcontrol:dist"<% } %> <% if(deployWithSFTP) { %>,

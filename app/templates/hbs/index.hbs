@@ -1,0 +1,27 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        {{> meta}}
+        <title><%= appname %></title>
+        {{> style}}
+    </head>
+    <body>
+        <div class="hero-unit">
+          <h1>Hello from Teslar</h1>
+          <p>You now have</p>
+          <ul>
+            <% if (includeCompass) { %><li>Sass with Compass</li><% } %>
+            <% if (includeModernizr) { %><li>Modernizr</li><% } %>
+            <% if (includeFoundation) { %><li>Foundation 5</li><% } %>
+            <% if (includePure) { %><li>YUI Pure</li><% } %>
+            <% if (deployWithCDN) { %><li><a href="https://github.com/RobinQu/grunt-cdn">CDN</a> Prefixing</li><% } %>
+            <% if (deployWithBuildControl) { %><li>Deployment over <a href="https://github.com/robwierzbowski/grunt-build-control">Git build control</a></li><% } %>
+            <% if (deployWithSFTP) { %><li>Deployment over <a href="https://github.com/andrewrjones/grunt-ssh">SFTP</a></li><% } %>
+          </ul>
+        </div>
+        {{> script}}
+    </body>
+</html>
