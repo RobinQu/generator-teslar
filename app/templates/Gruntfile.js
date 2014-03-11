@@ -313,16 +313,13 @@ module.exports = function (grunt) {
         // Run some tasks in parallel to speed up build process
         concurrent: {
             server: [<% if (includeCompass) { %>
-                "compass:server",<% } if (coffee) { %>
-                "coffee:dist",<% } %>
+                "compass:server",<% } %>
                 "copy:styles"
             ],
-            test: [<% if (coffee) { %>
-                "coffee",<% } %>
+            test: [
                 "copy:styles"
             ],
-            dist: [<% if (coffee) { %>
-                "coffee",<% } if (includeCompass) { %>
+            dist: [<% if (includeCompass) { %>
                 "compass",<% } %>
                 "copy:styles",
                 "imagemin",

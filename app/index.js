@@ -1,147 +1,156 @@
+/*global __dirname */
+
 var util = require("util");
 var path = require("path");
 var yeoman = require("yeoman-generator");
 var chalk = require("chalk");
 
 
-var TeslarGenerator = function(args, options, config) {
-  "use strict";
-  yeoman.generators.Base.apply(this, arguments);
-
-  // setup the test-framework property, Gruntfile template will need this
-  this.testFramework = options["test-framework"] || "mocha";
-  this.coffee = options.coffee;
-
-  // for hooks to resolve on mocha by default
-  options["test-framework"] = this.testFramework;
-
-  // resolved to mocha by default (could be switched to jasmine for instance)
-  this.hookFor("test-framework", {
-    as: "app",
-    options: {
-      options: {
-        "skip-install": options["skip-install-message"],
-        "skip-message": options["skip-install"]
-      }
-    }
-  });
-
-  this.options = options;
+var TeslarGenerator = yeoman.generators.Base.extend({
   
-  this.pkg = require("../package.json");
-};
+  init: function() {
+    this.pkg = require("../package.json");
+    this.testFramework = this.options["test-framework"] || "mocha";
+    this.teslar = this.readFileAsString(path.join(__dirname, "./TESLAR"));
+  },
+  
+  askFor: function () {
+      var done = this.async();
 
-TeslarGenerator.prototype.askFor = function () {
-  var done = this.async();
+      // have Yeoman greet the user
+      this.log(this.teslar);
 
-  // have Yeoman greet the user
-  this.log(this.yeoman);
+      // replace it with a short and sweet description of your generator
+      this.log(chalk.magenta("You are using Teslar generator. This is an opnionated generator using jQuery, handlebars, mocha and Grunt.js to build your app."));
 
-  // replace it with a short and sweet description of your generator
-  this.log(chalk.magenta("You are using Teslar generator. This is an opnionated generator using jQuery, handlebars, mocha and Grunt.js to build your app."));
+      var prompts = [{
+        type: "checkbox",
+        name: "features",
+        message: "What more would you like? (Mutiple choices)",
+        choices: [{
+          name: "Sass with Compass",
+          value: "includeCompass",
+          checked: true
+        }, {
+          name: "Modernizr",
+          value: "includeModernizr",
+          checked: true
+        }, {
+          name: "RequreJS",
+          value: "includeRequireJS",
+          checked: false
+        }]
+      }, {
+        name: "css",
+        type: "list",
+        message: "What CSS framework would like? (Single Choice)",
+        choices: [{
+          name: "None",
+          value: "includeNoCSS",
+          checked: true
+        }, {
+          name: "Foundation5 (IE9+ Compatible)",
+          value: "includeFoundation",
+          checked: false 
+        }, {
+          name: "YUI Pure (IE7+ Compatible)",
+          value: "includePure",
+          checked: false
+        }]
+      }];
 
-  var prompts = [{
-    type: "confirm",
-    name: "features",
-    message: "What more would you like?",
-    choices: [{
-      name: "Sass with Compass",
-      value: "includeCompass",
-      checked: false
-    }, {
-      name: "Modernizr",
-      value: "includeModernizr",
-      checked: false
-    }]
-  }];
+      this.prompt(prompts, function (answers) {
+        var features = answers.features;
 
-  this.prompt(prompts, function (answers) {
-    var features = answers.features;
+        function hasFeature(feat) { return features.indexOf(feat) !== -1; }
 
-    function hasFeature(feat) { return features.indexOf(feat) !== -1; }
-
-    this.includeCompass = hasFeature("includeCompass");
-    this.includeModernizr = hasFeature("includeModernizr");
+        this.includeCompass = hasFeature("includeCompass");
+        this.includeModernizr = hasFeature("includeModernizr");
+        this.includeFoundation = hasFeature("includeFoundation");
+        this.includePure = hasFeature("includePure");
+        this.includeRequireJS = hasFeature("includeRequireJS");
     
-    done();
-  }.bind(this));
-};
-
-TeslarGenerator.prototype.gruntfile = function gruntfile() {
-  this.template("Gruntfile.js");
-};
-
-TeslarGenerator.prototype.packageJSON = function packageJSON() {
-  this.template("_package.json", "package.json");
-};
-
-
-TeslarGenerator.prototype.git = function git() {
-  this.copy("gitignore", ".gitignore");
-  this.copy("gitattributes", ".gitattributes");
-};
-
-TeslarGenerator.prototype.bower = function bower() {
-  this.copy("bowerrc", ".bowerrc");
-  this.copy("_bower.json", "bower.json");
-};
-
-TeslarGenerator.prototype.jshint = function jshint() {
-  this.copy("jshintrc", ".jshintrc");
-};
-
-TeslarGenerator.prototype.editorConfig = function editorConfig() {
-  this.copy("editorconfig", ".editorconfig");
-};
-
-TeslarGenerator.prototype.h5 = function() {
-  this.copy("favicon.ico", "app/favicon.ico");
-  this.copy("robots.txt", "app/robots.txt");
-};
-
-TeslarGenerator.prototype.mainStylesheet = function mainStylesheet() {
-  var css = "main." + (this.includeCompass ? "s" : "") + "css";
-  this.copy(css, "app/styles/" + css);
-};
-
-TeslarGenerator.prototype.writeIndex = function writeIndex() {
-
-  this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), "index.html"));
-  this.indexFile = this.engine(this.indexFile, this);
-
-  this.indexFile = this.appendFiles({
-    html: this.indexFile,
-    fileType: "js",
-    optimizedPath: "scripts/main.js",
-    sourceFileList: ["scripts/main.js"],
-    searchPath: "{app,.tmp}"
-  });
-};
-
-TeslarGenerator.prototype.app = function app() {
-  this.mkdir("app");
-  this.mkdir("app/scripts");
-  this.mkdir("app/styles");
-  this.mkdir("app/images");
-  this.write("app/index.html", this.indexFile);
+        done();
+      }.bind(this));
+  },
   
-  this.write("app/scripts/main.js", "console.log(\"Hello from Teslar!\");");
+  gruntfile: function() {
+    this.template("Gruntfile.js");
+  },
   
-};
+  packageJSON: function() {
+    this.template("_package.json", "package.json");
+  },
+  
+  git: function() {
+    this.copy("gitignore", ".gitignore");
+    this.copy("gitattributes", ".gitattributes");
+  },
+  
+  bower: function() {
+    this.copy("bowerrc", ".bowerrc");
+    this.copy("_bower.json", "bower.json");
+  },
+  
+  
+  jshint: function() {
+    this.copy("jshintrc", ".jshintrc");
+  },
+  
+  editorConfig: function() {
+    this.copy("editorconfig", ".editorconfig");
+  },
+  
+  h5: function() {
+    this.copy("favicon.ico", "app/favicon.ico");
+    this.copy("robots.txt", "app/robots.txt");
+  },
+  
+  mainStylesheet: function() {
+    var css = "main." + (this.includeCompass ? "s" : "") + "css";
+    this.copy(css, "app/styles/" + css);
+  },
+  
+  
+  writeIndex: function() {
 
-TeslarGenerator.prototype.install = function () {
-  if (this.options["skip-install"]) {
-    return;
+    this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), "index.html"));
+    this.indexFile = this.engine(this.indexFile, this);
+
+    this.indexFile = this.appendFiles({
+      html: this.indexFile,
+      fileType: "js",
+      optimizedPath: "scripts/main.js",
+      sourceFileList: ["scripts/main.js"],
+      searchPath: "{app,.tmp}"
+    });
+  },
+  
+  app: function() {
+    this.mkdir("app");
+    this.mkdir("app/scripts");
+    this.mkdir("app/styles");
+    this.mkdir("app/images");
+    this.write("app/index.html", this.indexFile);
+  
+    this.write("app/scripts/main.js", "console.log(\"Hello from Teslar!\");");
+  
+  },
+  
+  install: function () {
+    if (this.options["skip-install"]) {
+      return;
+    }
+
+    var done = this.async();
+    this.installDependencies({
+      skipMessage: this.options["skip-install-message"],
+      skipInstall: this.options["skip-install"],
+      callback: done
+    });
   }
-
-  var done = this.async();
-  this.installDependencies({
-    skipMessage: this.options["skip-install-message"],
-    skipInstall: this.options["skip-install"],
-    callback: done
-  });
-};
-
+  
+});
 
 
 module.exports = TeslarGenerator;

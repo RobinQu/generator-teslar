@@ -1,6 +1,6 @@
 # generator-teslar [![Build Status](https://secure.travis-ci.org/RobinQu/generator-teslar.png?branch=master)](https://travis-ci.org/RobinQu/generator-teslar)
 
-> [Yeoman](http://yeoman.io) generator
+> An opinonated [Yeoman](http://yeoman.io) generator that boosts your devlopment and deployment
 
 
 ## Getting Started
