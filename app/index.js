@@ -57,6 +57,45 @@ var TeslarGenerator = yeoman.generators.Base.extend({
           value: "includePure",
           checked: false
         }]
+      }, {
+        name: "handlebar",
+        type: "checkbox",
+        message: "Handlebar related options (Multiple choices)",
+        choices: [{
+          name: "Don't use Handlebars",
+          value: "renderWithoutHandlebars",
+          checked: true
+        },{
+          name: "Precompile handlebars template for browser scripts",
+          value: "renderHandlebarinBrowser",
+          checked: false
+        }, {
+          name: "Render view with Handlebar in Grunt server and production server",
+          value: "renderWithHandlebarInGrunt",
+          checked: false
+        }]
+      }, {
+        name: "deploy",
+        type: "checkbox",
+        message: "Deployment related options (Mutiple choices)",
+        choices: [{
+          name: "Do nothing special about deployment",
+          value: "deployWithNothingSpecial",
+          checked: true
+        }, {
+          name: "Prefix assets path with CDN url in HTML and CSS",
+          checked: false,
+          value: "deployWithCDN"
+        }, {
+          name: "Deploy with Build Control",
+          checked: false,
+          value: "deployWithBuildControl"
+        }, {
+          name: "Deploy with SFTP",
+          checked: false,
+          value: "deployWithSFTP"
+        }]
+        
       }];
 
       this.prompt(prompts, function (answers) {
@@ -64,11 +103,22 @@ var TeslarGenerator = yeoman.generators.Base.extend({
 
         function hasFeature(feat) { return features.indexOf(feat) !== -1; }
 
+        // frameworks
         this.includeCompass = hasFeature("includeCompass");
         this.includeModernizr = hasFeature("includeModernizr");
         this.includeFoundation = hasFeature("includeFoundation");
         this.includePure = hasFeature("includePure");
         this.includeRequireJS = hasFeature("includeRequireJS");
+        
+        // handlebars
+        this.renderWithoutHandlebars = hasFeature("renderWithoutHandlebars");
+        this.renderHandlebarinBrowser = hasFeature("renderHandlebarinBrowser");
+        
+        // deployment
+        this.deployWithCDN = hasFeature("deployWithCDN");
+        this.deployWithBuildControl = hasFeature("deployWithBuildControl");
+        this.deployWithSFTP = hasFeature("deployWithSFTP");
+        // this.deployWithNothingSpecial = hasFeature("deployWithNothingSpecial");
     
         done();
       }.bind(this));
@@ -113,7 +163,6 @@ var TeslarGenerator = yeoman.generators.Base.extend({
   
   
   writeIndex: function() {
-
     this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), "index.html"));
     this.indexFile = this.engine(this.indexFile, this);
 
@@ -148,6 +197,20 @@ var TeslarGenerator = yeoman.generators.Base.extend({
       skipInstall: this.options["skip-install"],
       callback: done
     });
+  },
+  
+  gitrevision: function() {
+    this.log(chalk.magenta("Hint"), "You can refer to git revision in Gruntfile using template string as '<%= meta.revision %>'");
+  },
+  
+  sftp: function() {
+    this.copy("ssh.json", ".sshconfig");
+    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your deployment path");
+    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your credential in .sshconfig");
+  },
+  
+  cdn: function() {
+    this.log(chalk.magenta("Hint"), "CDN Prefixing is checked. You should setup your CDN prefix in Gruntfile");
   }
   
 });
