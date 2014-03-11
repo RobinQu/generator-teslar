@@ -1,0 +1,12 @@
+node_modules
+dist
+archives
+.tmp
+.sass-cache
+app/bower_components
+test/bower_components
+.hbs
+Thumb.db
+.idea
+.mock
+npm-debug.log
