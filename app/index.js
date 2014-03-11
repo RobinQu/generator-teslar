@@ -156,16 +156,22 @@ var TeslarGenerator = yeoman.generators.Base.extend({
   
   
   writeIndex: function() {
-    this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), "index.html"));
-    this.indexFile = this.engine(this.indexFile, this);
+    if(this.renderWithHandlebarInGrunt) {
+      this.mkdir("app/hbs_helpers");
+      this.copy("hbs", "app/hbs");
+    } else {
+      this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), "index.html"));
+      this.indexFile = this.engine(this.indexFile, this);
 
-    this.indexFile = this.appendFiles({
-      html: this.indexFile,
-      fileType: "js",
-      optimizedPath: "scripts/main.js",
-      sourceFileList: ["scripts/main.js"],
-      searchPath: "{app,.tmp}"
-    });
+      this.indexFile = this.appendFiles({
+        html: this.indexFile,
+        fileType: "js",
+        optimizedPath: "scripts/main.js",
+        sourceFileList: ["scripts/main.js"],
+        searchPath: "{app,.tmp}"
+      });
+      this.write("app/index.html", this.indexFile);
+    }
   },
   
   app: function() {
@@ -173,16 +179,10 @@ var TeslarGenerator = yeoman.generators.Base.extend({
     this.mkdir("app/scripts");
     this.mkdir("app/styles");
     this.mkdir("app/images");
-    this.write("app/index.html", this.indexFile);
-  
     this.write("app/scripts/main.js", "console.log(\"Hello from Teslar!\");");
   },
   
   hbs: function() {
-    if(this.renderWithHandlebarInGrunt) {
-      this.mkdir("app/hbs_helpers");
-      this.copy("hbs", "app/hbs");
-    }
     if(this.renderHandlebarinBrowser) {
       this.mkdir("app/scripts/hbs");
     }
