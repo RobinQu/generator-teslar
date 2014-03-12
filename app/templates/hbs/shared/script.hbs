@@ -1,6 +1,7 @@
 <!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
-<script src="bower_components/jquery/dist/jquery.js"></script>
+<% if (renderHandlebarinBrowser) { %><script src="/bower_components/jquery/dist/jquery.js"></script><% } %>
+<script src="/bower_components/handlebars/hanldebars.runtime.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 

@@ -19,7 +19,7 @@ module.exports = function (grunt) {
         options.base.forEach(function(base) {
           mws.push(connect.static(base));
         });
-        mws.push(hw(opt));
+        mws.push(require("handlebar-middleware")(opt));
         mws.push(connect.directory(directory));
         return mws;
       };
@@ -349,7 +349,11 @@ module.exports = function (grunt) {
           options: {
               assetsDirs: ["<%%= config.dist %>", "<%%= config.dist %>/images"]
           },
-          html: ["<%%= config.dist %>/{,*/}*.html"],
+          html: [<% if (renderWithHandlebarInGrunt) { %>
+            "<%%= config.dist %>/hbs/**/*.hbs",<% } %>
+            "<%%= config.dist %>/{,*/}*.html" 
+            
+          ],
           css: ["<%%= config.dist %>/styles/{,*/}*.css"]
       },
 

@@ -27,16 +27,12 @@
     "grunt-concurrent": "~0.4.0",
     "load-grunt-tasks": "~0.2.0",
     "time-grunt": "~0.2.0",
-    "jshint-stylish": "~0.1.3",
-    <% if (deployWithCDN) { %>
-    "grunt-cdn": "https://github.com/RobinQu/grunt-cdn/archive/master.tar.gz",
-    <% } %>
-    <% if (deployWithBuildControl) { %>
-    "grunt-build-control": "~0.1.2",
-    <% } %>
-    <% if (deployWithSFTP) { %>
-    "grunt-ssh": "~0.10.0",
-    <% } %>
+    "jshint-stylish": "~0.1.3",<% if (deployWithCDN) { %>
+    "grunt-cdn": "https://github.com/RobinQu/grunt-cdn/archive/master.tar.gz",<% } %><% if (deployWithBuildControl) { %>
+    "grunt-build-control": "~0.1.2",<% } %><% if (deployWithSFTP) { %>
+    "grunt-ssh": "~0.10.0",<% } %><% if (renderWithHandlebarInGrunt) { %>
+    "handlebar-middleware": "~0.0.3",<% } %><% if (renderHandlebarinBrowser) { %>
+    "grunt-contrib-handlebars": "~0.6.1",<% } %>
     "grunt-git-revision": "0.0.1"
   },
   "engines": {

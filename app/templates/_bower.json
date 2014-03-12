@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     <% if (includeModernizr) { %>"modernizr": "~2.6.2",<% } %><% if (includePure) { %>
+    <% if (renderHandlebarinBrowser) %>"handlebars": "~1.3.0",<% } %>
     "pure": "~0.4.2",<% } %><% if (includeFoundation) { %>
     "foundation": "~5.1.1",
     "jquery": "~2.1.0"<% } else { %>

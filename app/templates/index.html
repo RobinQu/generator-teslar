@@ -9,13 +9,16 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <link rel="shortcut icon" href="/favicon.ico">
-        <!-- build:css styles/vendor.css -->
+        <!-- build:css styles/vendor.css --><% if (includeFoundation) { %>
+        <% if (includeCompass) { %><link rel="stylesheet" href="styles/foundation.css"><% } else { %><link rel="stylesheet" href="/bower_components/foundation/normalize.css">
+        <link rel="stylesheet" href="/bower_components/foundation/foundation.css"><% } %>
+        <% } %><% if (includePure) { %><link rel="stylesheet" href="/bower_components/pure/pure.css"><% } %>
         <!-- endbuild -->
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild --><% if (includeModernizr) { %>
         <!-- build:js scripts/vendor/modernizr.js -->
-        <script src="bower_components/modernizr/modernizr.js"></script>
+        <script src="/bower_components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
         <% } %>
     </head>
@@ -36,7 +39,9 @@
 
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
-        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="/bower_components/jquery/dist/jquery.js"></script>
+        <% if (renderHandlebarinBrowser) { %><script src="/bower_components/jquery/dist/jquery.js"></script><% } %>
+        
         <!-- endbower -->
         <!-- endbuild -->
 

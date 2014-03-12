@@ -4,6 +4,7 @@ var util = require("util");
 var path = require("path");
 var yeoman = require("yeoman-generator");
 var chalk = require("chalk");
+var cheerio = require("cheerio");
 
 
 var TeslarGenerator = yeoman.generators.Base.extend({
@@ -159,22 +160,30 @@ var TeslarGenerator = yeoman.generators.Base.extend({
   mainStylesheet: function() {
     var css = "main." + (this.includeCompass ? "s" : "") + "css";
     this.copy(css, "app/styles/" + css);
+    if(this.includeFoundation && this.includeCompass) {//insert foundation.scss into app/styles
+      this.copy("foundation.scss", "app/styles/foundation.scss");
+    }
   },
   
   
   writeIndex: function() {
     if(this.renderWithHandlebarInGrunt) {
       this.mkdir("app/hbs_helpers");
-      this.bulkDirectory("hbs", "app/hbs");
-      this.scriptHbs = this.appendFiles({
-        html: this.readFileAsString(path.join(this.sourceRoot(), "hbs/shared/script.hbs")),
-        fileType: "js",
-        optimizedPath: "scripts/main.js",
-        sourceFileList: ["scripts/main.js"],
-        searchPath: "{app,.tmp}"
-      });
-      this.template("hbs/index.hbs", "app/hbs/index.hbs");
+      // this.bulkDirectory("hbs", "app/hbs");
+      
+      //TODO better way to insert script block into HBS files
+      var $ = cheerio.load(
+        this.readFileAsString(path.join(this.sourceRoot(), "hbs/shared/script.hbs")));
+        
+      $("script").last().after(this.generateBlock("js", "scripts/main.js", "<script src='scripts/main'></script>", "{app,.tmp}"));
+      this.scriptHbs = $.html();
       this.write("app/hbs/shared/script.hbs", this.scriptHbs);
+      // update index file
+      this.template("hbs/index.hbs", "app/hbs/index.hbs");
+      this.template("hbs/shared/style.hbs", "app/hbs/shared/style.hbs");
+      this.template("hbs/shared/meta.hbs", "app/hbs/shared/meta.hbs");
+      
+      
     } else {
       this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), "index.html"));
       this.indexFile = this.engine(this.indexFile, this);
