@@ -38,6 +38,18 @@ Unique features:
   * SFTP
 * Assets path replacement with CDN prefix
 
+## Frameworks
+
+Optional CSS Frameworks
+
+* YUI Pure
+* Foundation 5
+
+## Deployment
+
+* [grunt-buildcontrol](https://github.com/robwierzbowski/grunt-build-control/) helps you transfer your build to a specific Git remote/branch
+* [grunt-cdn](https://github.com/tactivos/grunt-cdn) helps you to prefix your CSS/Javascript paths with your CDN location
+* [grunt-ssh](https://github.com/andrewrjones/grunt-ssh) helps you to deploy your build to SFTP server
 
 ## License
 
