@@ -91,28 +91,35 @@ var TeslarGenerator = yeoman.generators.Base.extend({
       }];
 
       this.prompt(prompts, function (answers) {
-        var features = answers.features;
-
-        function hasFeature(feat) { return features.indexOf(feat) !== -1; }
-
+        function hasFeature(feat) { 
+          var key;
+          for(key in answers) {
+            if(answers.hasOwnProperty(key) && answers[key].indexOf(feat) !== -1) {
+              return true;
+            }
+          }
+          return false;
+        }
+        
+        
         // frameworks
         this.includeCompass = hasFeature("includeCompass");
         this.includeModernizr = hasFeature("includeModernizr");
         this.includeFoundation = hasFeature("includeFoundation");
         this.includePure = hasFeature("includePure");
         this.includeRequireJS = hasFeature("includeRequireJS");
-        this.renderWithHandlebarInGrunt = hasFeature("renderWithHandlebarInGrunt");
+        
         
         // handlebars
         this.renderWithoutHandlebars = hasFeature("renderWithoutHandlebars");
         this.renderHandlebarinBrowser = hasFeature("renderHandlebarinBrowser");
+        this.renderWithHandlebarInGrunt = hasFeature("renderWithHandlebarInGrunt");
         
         // deployment
         this.deployWithCDN = hasFeature("deployWithCDN");
         this.deployWithBuildControl = hasFeature("deployWithBuildControl");
         this.deployWithSFTP = hasFeature("deployWithSFTP");
         this.noActualDeployment = !(this.deployWithBuildControl || this.deployWithSFTP);
-    
         done();
       }.bind(this));
   },
@@ -158,7 +165,16 @@ var TeslarGenerator = yeoman.generators.Base.extend({
   writeIndex: function() {
     if(this.renderWithHandlebarInGrunt) {
       this.mkdir("app/hbs_helpers");
-      this.copy("hbs", "app/hbs");
+      this.bulkDirectory("hbs", "app/hbs");
+      this.scriptHbs = this.appendFiles({
+        html: this.readFileAsString(path.join(this.sourceRoot(), "hbs/shared/script.hbs")),
+        fileType: "js",
+        optimizedPath: "scripts/main.js",
+        sourceFileList: ["scripts/main.js"],
+        searchPath: "{app,.tmp}"
+      });
+      this.template("hbs/index.hbs", "app/hbs/index.hbs");
+      this.write("app/hbs/shared/script.hbs", this.scriptHbs);
     } else {
       this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), "index.html"));
       this.indexFile = this.engine(this.indexFile, this);
