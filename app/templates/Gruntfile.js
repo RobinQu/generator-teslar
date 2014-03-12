@@ -285,7 +285,7 @@ module.exports = function (grunt) {
               imagesDir: "<%%= config.app %>/images",
               javascriptsDir: "<%%= config.app %>/scripts",
               fontsDir: "<%%= config.app %>/styles/fonts",
-              importPath: "<%%= config.app %>/bower_components",
+              importPath: "<%%= config.app %>/bower_components<% if(includeFoundation) { %>/foundation/scss/<% } %>",
               httpImagesPath: "/images",
               httpGeneratedImagesPath: "/images/generated",
               httpFontsPath: "/styles/fonts",
@@ -341,7 +341,10 @@ module.exports = function (grunt) {
           options: {
               dest: "<%%= config.dist %>"
           },
-          html: "<%%= config.app %>/index.html"
+          html: [<% if (renderWithHandlebarInGrunt) { %>
+            "<%%= config.app %>/hbs/**/*.hbs",<% } %>
+            "<%%= config.app %>/index.html"
+          ]
       },
 
       // Performs rewrites based on rev and the useminPrepare configuration
@@ -506,6 +509,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask("build", [
+        "revision",
         "clean:dist",
         "useminPrepare",
         "concurrent:dist",
@@ -534,7 +538,7 @@ module.exports = function (grunt) {
       "build", <% if (deployWithBuildControl) { %> 
       "buildcontrol:dist"<% } %> <% if(deployWithSFTP) { %>,
       "sftp:deploy"<% } %>
-      ]);
+    ]);
     <% } %>
     
 };
