@@ -9,16 +9,35 @@ var cheerio = require("cheerio");
 
 var TeslarGenerator = yeoman.generators.Base.extend({
   
-  init: function() {
+  constructor: function(args, options, config) {
+    yeoman.generators.Base.apply(this, arguments);
+    // setup the test-framework property, Gruntfile template will need this
+    this.testFramework = options["test-framework"] || "mocha";
+    options["test-framework"] = this.testFramework;
+    
+    this.options = options;
+    // resolved to mocha by default (could be switched to jasmine for instance)
+    this.hookFor("test-framework", {
+      as: "app",
+      options: {
+        options: {
+          "skip-install": options["skip-install-message"],
+          "skip-message": options["skip-install"]
+        }
+      }
+    });
+    
     this.pkg = require("../package.json");
-    this.testFramework = this.options["test-framework"] || "mocha";
+  },
+  
+  init: function() {
+    
     this.teslar = this.readFileAsString(path.join(__dirname, "./TESLAR"));
   },
   
   askFor: function () {
       var done = this.async();
 
-      // have Yeoman greet the user
       this.log(this.teslar);
 
       // replace it with a short and sweet description of your generator
@@ -207,12 +226,18 @@ var TeslarGenerator = yeoman.generators.Base.extend({
     this.mkdir("app/scripts");
     this.mkdir("app/styles");
     this.mkdir("app/images");
-    this.write("app/scripts/main.js", "console.log(\"Hello from Teslar!\");");
+    // this.write("app/scripts/main.js", "console.log(\"Hello from Teslar!\");");
+    this.template("main.js", "app/scripts/main.js");
   },
   
   hbs: function() {
     if(this.renderHandlebarinBrowser) {
       this.mkdir("app/scripts/hbs");
+      this.write("app/scripts/hbs/teslar.hbs", "I'm {{name}}!");
+    }
+    if(!this.renderWithoutHandlebars) {
+      this.mkdir("app/fixtures");
+      this.write("app/fixtures/index.json", JSON.stringify({"name":"Teslar"}));
     }
   },
   
@@ -230,17 +255,23 @@ var TeslarGenerator = yeoman.generators.Base.extend({
   },
   
   gitrevision: function() {
-    this.log(chalk.magenta("Hint"), "You can refer to git revision in Gruntfile using template string as '<%= meta.revision %>'!");
+    this.on("end", function() {
+      this.log(chalk.magenta("Hint"), "You can refer to git revision in Gruntfile using template string as '<%= meta.revision %>'!");
+    }.bind(this));
   },
   
   sftp: function() {
-    this.copy("ssh.json", ".sshconfig");
-    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your deployment path!");
-    this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your credential in .sshconfig!");
+    this.on("end", function() {
+      this.copy("ssh.json", ".sshconfig");
+      this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your deployment path!");
+      this.log(chalk.magenta("Hint"), "SFTP deployment is checked. You should setup your credential in .sshconfig!");
+    }.bind(this));
   },
   
   cdn: function() {
-    this.log(chalk.magenta("Hint"), "CDN Prefixing is checked. You should setup your CDN prefix in Gruntfile!");
+    this.on("end", function() {
+      this.log(chalk.magenta("Hint"), "CDN Prefixing is checked. You should setup your CDN prefix in Gruntfile!");
+    }.bind(this));
   }
   
 });

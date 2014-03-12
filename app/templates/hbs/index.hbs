@@ -20,6 +20,8 @@
             <% if (deployWithCDN) { %><li><a href="https://github.com/RobinQu/grunt-cdn">CDN</a> Prefixing</li><% } %>
             <% if (deployWithBuildControl) { %><li>Deployment over <a href="https://github.com/robwierzbowski/grunt-build-control">Git build control</a></li><% } %>
             <% if (deployWithSFTP) { %><li>Deployment over <a href="https://github.com/andrewrjones/grunt-ssh">SFTP</a></li><% } %>
+            <% if (renderWithHandlebarInGrunt) { %><li>Handlebars is used in Grunt server by {{name}}</li><% } %>
+            <% if (renderHandlebarinBrowser) { %><li>Handlebars is used in client-side Javascript by Telsar</li><% } %>
           </ul>
         </div>
         {{> script}}

@@ -184,7 +184,7 @@ module.exports = function (grunt) {
                   ]<% if (renderWithHandlebarInGrunt) { %>,
                   middleware: mwFactory({
                     source: "./app/hbs",
-                    fixtures: "./test/fixtures",
+                    fixtures: "./app/fixtures",
                     helpers: "./app/hbs_helpers/*.js"
                   })
                   <% } %>
@@ -207,7 +207,7 @@ module.exports = function (grunt) {
                   livereload: false<% if (renderWithHandlebarInGrunt) { %>,
                   middleware: mwFactory({
                     source: "./dist/hbs",
-                    fixtures: "./test/fixtures",
+                    fixtures: "./app/fixtures",
                     helpers: "./app/hbs_helpers/*.js"
                   })<% } %>
               }
