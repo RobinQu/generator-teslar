@@ -193,16 +193,17 @@ var TeslarGenerator = yeoman.generators.Base.extend({
       // this.bulkDirectory("hbs", "app/hbs");
       
       //TODO better way to insert script block into HBS files
-      var $ = cheerio.load(
-        this.readFileAsString(path.join(this.sourceRoot(), "hbs/shared/script.hbs")));
+      this.scriptHbs = this.engine(this.readFileAsString(path.join(this.sourceRoot(), "hbs/shared/script.hbs")), this);
+      var $ = cheerio.load(this.scriptHbs);
         
       $("script:last-child").after(this.generateBlock("js", "scripts/main.js", "<script src='scripts/main'></script>", "{app,.tmp}"));
       this.scriptHbs = $.html();
+      
       this.write("app/hbs/shared/script.hbs", this.scriptHbs);
       // update index file
       this.template("hbs/index.hbs", "app/hbs/index.hbs");
       this.template("hbs/shared/style.hbs", "app/hbs/shared/style.hbs");
-      this.template("hbs/shared/script.hbs", "app/hbs/shared/script.hbs");
+      // this.template("hbs/shared/script.hbs", "app/hbs/shared/script.hbs");
       this.template("hbs/shared/meta.hbs", "app/hbs/shared/meta.hbs");
       
       
