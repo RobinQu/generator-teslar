@@ -158,13 +158,15 @@ var TeslarGenerator = yeoman.generators.Base.extend({
   },
   
   mainStylesheet: function() {
-    var css = "main." + (this.includeCompass ? "s" : "") + "css";
-    this.copy(css, "app/styles/" + css);
-    if(this.includeFoundation && this.includeCompass) {//insert foundation.scss into app/styles
-      this.copy("foundation.scss", "app/styles/foundation.scss");
+    if(this.includeCompass) {
+      if(this.includeFoundation) {
+        this.copy("_settings.scs", "app/styles/_settings.scss");
+      }
+      this.template("main.scss", "app/styles/main.scss");
+    } else {
+      this.copy("main.css", "app/styles/main.css");
     }
   },
-  
   
   writeIndex: function() {
     if(this.renderWithHandlebarInGrunt) {
